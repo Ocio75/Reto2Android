@@ -1,7 +1,9 @@
 package com.example.chatbien;
 
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
@@ -11,6 +13,8 @@ import android.widget.CheckBox;
 import android.widget.ProgressBar;
 import android.widget.TextView;
 import android.widget.Toast;
+
+import com.example.chatbien.objetos.DAO_empleados;
 
 public class menu_login extends AppCompatActivity {
     private ProgressBar progressBar;
@@ -58,25 +62,36 @@ public class menu_login extends AppCompatActivity {
     public void conectr(View v) {
         progressBar.setVisibility(View.VISIBLE);
         recordarPasword();
-        /*ConexionSQLServer conexion = new ConexionSQLServer();
+        DAO_empleados empleados = new DAO_empleados();
+        if(empleados.validarCodigo(Integer.parseInt(etUsuario.getText().toString()))){
+            if(empleados.login(etPaswd.getText().toString(),Integer.parseInt(etUsuario.getText().toString()))){
+                Intent i = new Intent(this, menu_chat.class);
+                i.putExtra("dni", etUsuario.getText().toString());
+                startActivity(i);
+                finish();
+                progressBar.setVisibility(View.INVISIBLE);
+            }else{
+                new AlertDialog.Builder(this)
+                        .setTitle("Contraseña incorrecto")
+                        .setMessage("La contraseña no es correcta")
+                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                            public void onClick(DialogInterface dialog, int which) {
+                                etPaswd.setText("");
+                            }
+                        })
+                        .setIcon(android.R.drawable.ic_dialog_alert).show();            }
+        }else{
+            new AlertDialog.Builder(this)
+                    .setTitle("Usuario incorrecto")
+                    .setMessage("No existe ningun usuario con ese dni")
+                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            etUsuario.setText("");
+                            etPaswd.setText("");
+                        }
+                    })
+                    .setIcon(android.R.drawable.ic_dialog_alert).show();                    }
 
-        try {
-            conexion.Conectar();
 
-            if (conexion.con != null) {
-                Toast.makeText(getApplicationContext(), "Conexión exitosa", Toast.LENGTH_SHORT).show();
-            } else {
-                Toast.makeText(getApplicationContext(), "Error de conexión", Toast.LENGTH_SHORT).show();
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-            Toast.makeText(getApplicationContext(), "Error inesperado: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-        } finally {
-
-        }*/
-        Intent i = new Intent(this, menu_chat.class);
-        startActivity(i);
-        finish();
-        progressBar.setVisibility(View.INVISIBLE);
     }
 }

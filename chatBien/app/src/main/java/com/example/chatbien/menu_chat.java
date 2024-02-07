@@ -80,13 +80,9 @@ public class menu_chat extends AppCompatActivity implements View.OnClickListener
         listaMensajes = new ArrayList<>();
         adaptadorMensajes = new AdaptadorMensajes(this, listaMensajes);
         lvChat.setAdapter(adaptadorMensajes);
-        dniUsuario = "2099";
         Bundle extras = getIntent().getExtras();
-        if (extras != null && extras.containsKey("USUARIO")) {
-            usuario = extras.getString("USUARIO");
-        } else {
-            usuario = "Usuario";
-        }
+        dniUsuario=extras.getString("dni");
+
         if (ActivityCompat.checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
                 != PackageManager.PERMISSION_GRANTED) {
             // Si el permiso no está concedido, solicitarlo al usuario
