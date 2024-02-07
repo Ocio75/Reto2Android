@@ -32,6 +32,9 @@ android {
 }
 
 dependencies {
+    implementation ("com.squareup.okhttp3:okhttp:4.9.0")
+    implementation ("com.getkeepsafe.relinker:relinker:1.4.5")
+    implementation ("com.twilio:voice-android:5.7.2")
     implementation (  "androidx.emoji:emoji-appcompat:1.1.0")
     implementation ("androidx.core:core-ktx:1.7.0"  )
     implementation ("com.google.android.material:material:1.7.0")
