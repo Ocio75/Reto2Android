@@ -8,6 +8,7 @@ import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.CheckBox;
 import android.widget.ProgressBar;
@@ -63,35 +64,37 @@ public class menu_login extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         recordarPasword();
         DAO_empleados empleados = new DAO_empleados();
-        if(empleados.validarCodigo(Integer.parseInt(etUsuario.getText().toString()))){
-            if(empleados.login(etPaswd.getText().toString(),Integer.parseInt(etUsuario.getText().toString()))){
-                Intent i = new Intent(this, menu_chat.class);
-                i.putExtra("dni", etUsuario.getText().toString());
-                startActivity(i);
-                finish();
-                progressBar.setVisibility(View.INVISIBLE);
-            }else{
-                new AlertDialog.Builder(this)
-                        .setTitle("Contraseña incorrecto")
-                        .setMessage("La contraseña no es correcta")
-                        .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                            public void onClick(DialogInterface dialog, int which) {
-                                etPaswd.setText("");
-                            }
-                        })
-                        .setIcon(android.R.drawable.ic_dialog_alert).show();            }
-        }else{
-            new AlertDialog.Builder(this)
-                    .setTitle("Usuario incorrecto")
-                    .setMessage("No existe ningun usuario con ese dni")
-                    .setPositiveButton("Aceptar", new DialogInterface.OnClickListener() {
-                        public void onClick(DialogInterface dialog, int which) {
-                            etUsuario.setText("");
-                            etPaswd.setText("");
-                        }
-                    })
-                    .setIcon(android.R.drawable.ic_dialog_alert).show();                    }
-
-
+        while (empleados.conexion != null) {
+            Log.d("loquesea", "conectado");
+            try {
+                int usuarioId = Integer.parseInt(etUsuario.getText().toString());
+                if (!empleados.validarCodigo(usuarioId)) {
+                    if (empleados.login(etPaswd.getText().toString(), usuarioId)) {
+                        Intent i = new Intent(this, menu_chat.class);
+                        i.putExtra("dni", etUsuario.getText().toString());
+                        startActivity(i);
+                        finish();
+                    } else {
+                        mostrarDialogoError("Contraseña incorrecto", "La contraseña no es correcta");
+                    }
+                } else {
+                    mostrarDialogoError("Usuario incorrecto", "No existe ningun usuario con ese dni");
+                }
+            } catch (NumberFormatException e) {
+                mostrarDialogoError("Error de formato", "El ID del usuario debe ser numérico");
+            }
+        }
+        progressBar.setVisibility(View.INVISIBLE);
+    }
+    private void mostrarDialogoError(String titulo, String mensaje) {
+        new AlertDialog.Builder(this)
+                .setTitle(titulo)
+                .setMessage(mensaje)
+                .setPositiveButton("Aceptar", (dialog, which) -> {
+                    etUsuario.setText("");
+                    etPaswd.setText("");
+                })
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }

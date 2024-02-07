@@ -7,7 +7,7 @@ import java.util.ArrayList;
 
 public class DAO_empleados implements Patron_DAO<DTO_empleados> {
 
-	private Connection conexion;
+	public Connection conexion;
 
 	public DAO_empleados() {
 		this.conexion = Conexion.getInstancia().getCon();
