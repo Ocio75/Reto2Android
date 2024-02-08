@@ -7,6 +7,7 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -21,6 +22,8 @@ public class menu_login extends AppCompatActivity {
     private ProgressBar progressBar;
     private CheckBox cbRecordar;
     private TextView etUsuario,etPaswd;
+
+    private DAO_empleados empleados = new DAO_empleados();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -59,32 +62,38 @@ public class menu_login extends AppCompatActivity {
         }
         cursor.close();
         bd.close();
-    }
+    } //Pepe
     public void conectr(View v) {
         progressBar.setVisibility(View.VISIBLE);
         recordarPasword();
-        DAO_empleados empleados = new DAO_empleados();
-        while (empleados.conexion != null) {
-            Log.d("loquesea", "conectado");
-            try {
-                int usuarioId = Integer.parseInt(etUsuario.getText().toString());
-                if (!empleados.validarCodigo(usuarioId)) {
-                    if (empleados.login(etPaswd.getText().toString(), usuarioId)) {
-                        Intent i = new Intent(this, menu_chat.class);
-                        i.putExtra("dni", etUsuario.getText().toString());
-                        startActivity(i);
-                        finish();
-                    } else {
-                        mostrarDialogoError("Contraseña incorrecto", "La contraseña no es correcta");
+        Log.d("loquesea", "conectado");
+        Intent i = new Intent(this, menu_chat.class);
+        new AsyncTask<Void, Void, Boolean>() {
+            @Override
+            protected Boolean doInBackground(Void... voids) {
+                try {
+                    int usuarioId = Integer.parseInt(etUsuario.getText().toString());
+                    if (empleados.validarCodigo(usuarioId)) {
+                        return empleados.login(etPaswd.getText().toString(), usuarioId);
                     }
-                } else {
-                    mostrarDialogoError("Usuario incorrecto", "No existe ningun usuario con ese dni");
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
                 }
-            } catch (NumberFormatException e) {
-                mostrarDialogoError("Error de formato", "El ID del usuario debe ser numérico");
+                return false;
             }
-        }
-        progressBar.setVisibility(View.INVISIBLE);
+
+            @Override
+            protected void onPostExecute(Boolean loginSuccessful) {
+                progressBar.setVisibility(View.INVISIBLE);
+                if (loginSuccessful) {
+                    i.putExtra("dni", etUsuario.getText().toString());
+                    startActivity(i);
+                    finish();
+                } else {
+                    mostrarDialogoError("Error de autenticación", "Usuario o contraseña incorrectos");
+                }
+            }
+        }.execute();
     }
     private void mostrarDialogoError(String titulo, String mensaje) {
         new AlertDialog.Builder(this)

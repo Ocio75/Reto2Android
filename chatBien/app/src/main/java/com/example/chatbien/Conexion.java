@@ -4,7 +4,6 @@ import android.util.Log;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-
 public class Conexion {
     private static Conexion instancia = null;
     private final String ip = "mysql-8001.dinaserver.com";
@@ -14,37 +13,30 @@ public class Conexion {
     private final String passwd = "NyTgj2^&=173";
     private final String cadena = "jdbc:mysql://" + ip + ":" + port + "/" + BBDD;
     private final String driver = "com.mysql.jdbc.Driver";
-    protected static volatile Connection con;
+    protected static Connection con;
 
-    private Conexion(){
+    public Conexion(){
         new Thread(() -> {
-                try {
-                    Class.forName(driver);
-                    con = DriverManager.getConnection(cadena, user, passwd);
-                    if (con != null) {
-                        Log.d("TAG", "Conexion a BD " + ip + " con exito");
-                    } else {
-                        Log.d("TAG", "Imposible conexión con " + ip);
-                    }
-                } catch (ClassNotFoundException ex) {
-                    Log.d("TAG", "Excepción de clase no encontrada " + ex);
-                } catch (SQLException ex) {
-                    Log.d("TAG", "Excepción de SQL " + ex);
+            try {
+                Class.forName(driver);
+                con = DriverManager.getConnection(cadena, user, passwd);
+                if (con != null) {
+                    Log.d("TAG", "Conexion a BD " + ip + " con exito");
+                } else {
+                    Log.d("TAG", "Imposible conexión con " + ip);
                 }
-
+            } catch (ClassNotFoundException ex) {
+                Log.d("TAG", "Excepción de clase no encontrada " + ex);
+            } catch (SQLException ex) {
+                Log.d("TAG", "Excepción de SQL " + ex);
+            } finally {
+                // Cerramos el hilo una vez establecida la conexión
+                Thread.currentThread().interrupt();
+            }
         }).start();
     }
 
-    public static Conexion getInstancia(){
-        if (instancia == null) {
-            synchronized (Conexion.class) {
-                if (instancia == null) instancia = new Conexion();
-            }
-        }
-        return instancia;
-    }
-
-    public Connection getCon() {
+    public static Connection getCon() {
         if (con == null) {
             Log.e("TAG", "Error: La conexión es nula.");
         }

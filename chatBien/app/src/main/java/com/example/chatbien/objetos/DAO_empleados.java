@@ -1,5 +1,7 @@
 package com.example.chatbien.objetos;
 
+import android.util.Log;
+
 import com.example.chatbien.Conexion;
 
 import java.sql.*;
@@ -9,8 +11,12 @@ public class DAO_empleados implements Patron_DAO<DTO_empleados> {
 
 	public Connection conexion;
 
+	public Conexion con = new Conexion();
+
 	public DAO_empleados() {
-		this.conexion = Conexion.getInstancia().getCon();
+		while(con == null)
+			this.conexion = Conexion.getCon();
+		Log.e("Conexion", "Conexion por mis huevos");
 	}
 
 	@Override
@@ -111,12 +117,14 @@ public class DAO_empleados implements Patron_DAO<DTO_empleados> {
 
 	@Override
 	public ArrayList<DTO_empleados> listarTodos() {
+		if(this.conexion == null)
+			this.conexion = Conexion.getCon();
 		ArrayList<DTO_empleados> listaEmpleados = new ArrayList<>();
 		String query = "SELECT * FROM empleados";
 
 		try {
-			PreparedStatement preparedStatement = conexion.prepareStatement(query);
-			ResultSet resultSet = preparedStatement.executeQuery();
+			Statement preparedStatement = conexion.createStatement();
+			ResultSet resultSet = preparedStatement.executeQuery(query);
 			while (resultSet.next()) {
 				int dni = resultSet.getInt("dni");
 				String nombre = resultSet.getString("nombre");
@@ -131,6 +139,7 @@ public class DAO_empleados implements Patron_DAO<DTO_empleados> {
 						codigo_departamento, contrasena, foto);
 				listaEmpleados.add(empleado);
 			}
+			Log.e("Empleados", listaEmpleados.toString());
 
 		} catch (SQLException e) {
 			e.printStackTrace();

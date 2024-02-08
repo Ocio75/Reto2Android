@@ -111,7 +111,7 @@ public class menu_chat extends AppCompatActivity implements View.OnClickListener
 
                 // Crear el socket SSL
                 SSLSocketFactory sslSocketFactory = sslContext.getSocketFactory();
-                socket = sslSocketFactory.createSocket("10.0.2.2", 12345);
+                socket = sslSocketFactory.createSocket("192.168.0.101", 12345);
 
                 output = new PrintWriter(socket.getOutputStream(), true);
                 output.println(dniUsuario);
