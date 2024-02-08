@@ -71,10 +71,8 @@ public class menu_chat extends AppCompatActivity implements View.OnClickListener
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu_chat);
-        btAjustes=findViewById(R.id.btAjustes);
         btEnviar=findViewById(R.id.btEnviar);
         etMensaje= findViewById(R.id.etMensaje);
-        btAjustes.setOnClickListener(this);
         btEnviar.setOnClickListener(this);
         lvChat = findViewById(R.id.lvChat);
         listaMensajes = new ArrayList<>();

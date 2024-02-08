@@ -6,9 +6,4 @@
         android:icon="@android:drawable/ic_menu_call"
         android:title="Item"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/videollamada"
-        android:icon="@android:drawable/presence_video_online"
-        android:title="Item"
-        app:showAsAction="always" />
 </menu>
